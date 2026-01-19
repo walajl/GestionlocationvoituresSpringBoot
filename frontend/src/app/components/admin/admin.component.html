@@ -1,0 +1,108 @@
+<div class="admin-page">
+    <!-- Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
+        <div class="card"
+            style="text-align: center; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none;">
+            <div
+                style="font-size: 13px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                Chiffre d'Affaires</div>
+            <div style="font-size: 36px; font-weight: 700;">{{ getTotalCA() }} DT</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Revenus confirmés</div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div
+                style="font-size: 13px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                Réservations</div>
+            <div style="font-size: 36px; font-weight: 700; color: #1e293b;">{{ reservations.length }}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Total demandes</div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div
+                style="font-size: 13px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                En Attente</div>
+            <div style="font-size: 36px; font-weight: 700; color: #f59e0b;">{{ getPendingCount() }}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">À traiter</div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div
+                style="font-size: 13px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                Confirmées</div>
+            <div style="font-size: 36px; font-weight: 700; color: #22c55e;">{{ getAcceptedCount() }}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Validées</div>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Gestion des Réservations</h1>
+        <p>Validez ou refusez les demandes des clients</p>
+    </div>
+
+    <!-- Message -->
+    <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'"
+        [class.alert-danger]="messageType === 'error'">
+        {{ message }}
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+        <div *ngIf="loading && !reservations.length" style="text-align: center; padding: 60px; color: #64748b;">
+            Chargement des réservations...
+        </div>
+
+        <div class="table-responsive" *ngIf="reservations.length">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Véhicule</th>
+                        <th>Période</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let res of reservations">
+                        <td>
+                            <strong>{{ res.user?.nom || 'Client' }} {{ res.user?.prenom || '' }}</strong>
+                            <div style="font-size: 13px; color: #64748b;">{{ res.user?.email || '' }}</div>
+                        </td>
+                        <td><strong>{{ res.car?.immatriculation || 'N/A' }}</strong></td>
+                        <td style="color: #64748b;">{{ res.dateDebut }} → {{ res.dateFin }}</td>
+                        <td><strong style="color: #2563eb; font-size: 18px;">{{ res.montantTotal }} DT</strong></td>
+                        <td>
+                            <span class="badge" [class.badge-warning]="res.statut === 'EN_ATTENTE'"
+                                [class.badge-success]="res.statut === 'ACCEPTEE'"
+                                [class.badge-danger]="res.statut === 'ANNULEE'">
+                                {{ res.statut === 'EN_ATTENTE' ? 'En attente' : (res.statut === 'ACCEPTEE' ? 'Confirmée'
+                                : 'Refusée') }}
+                            </span>
+                        </td>
+                        <td>
+                            <div *ngIf="res.statut === 'EN_ATTENTE'" style="display: flex; gap: 8px;">
+                                <button class="btn btn-success" style="padding: 8px 16px;"
+                                    (click)="updateStatus(res.id, 'accept')" [disabled]="loading">Valider</button>
+                                <button class="btn btn-danger" style="padding: 8px 16px;"
+                                    (click)="updateStatus(res.id, 'cancel')" [disabled]="loading">Refuser</button>
+                            </div>
+                            <div *ngIf="res.statut === 'ACCEPTEE'" style="display: flex; gap: 8px;">
+                                <button class="btn btn-outline"
+                                    style="padding: 6px 12px; font-size: 12px; border-color: #ef4444; color: #ef4444;"
+                                    (click)="updateStatus(res.id, 'cancel')" [disabled]="loading">
+                                    Annuler
+                                </button>
+                            </div>
+                            <span *ngIf="res.statut === 'ANNULEE'" style="color: #94a3b8;">Annulée</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div *ngIf="!loading && !reservations.length" style="text-align: center; padding: 60px; color: #64748b;">
+            <h3>Aucune réservation</h3>
+            <p>Les nouvelles réservations apparaîtront ici.</p>
+        </div>
+    </div>
+</div>

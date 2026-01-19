@@ -1,0 +1,87 @@
+<div class="home-page">
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Location de Voitures</h1>
+        <p>Louez la voiture de vos rêves en quelques clics. Service rapide et fiable.</p>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" (click)="navService.switchTab('login')"
+                *ngIf="!authService.isAuthenticated()">
+                Se Connecter
+            </button>
+            <button class="btn btn-outline" style="background: white; margin-left: 10px;"
+                (click)="navService.switchTab('register')" *ngIf="!authService.isAuthenticated()">
+                Créer un Compte
+            </button>
+            <button class="btn btn-primary" (click)="navService.switchTab('catalogue')"
+                *ngIf="authService.isAuthenticated()">
+                Voir les Voitures
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature">
+            <div class="feature-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    <path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2" />
+                    <path d="M9 17h6" />
+                    <path d="M5 6l4 5h6" />
+                </svg>
+            </div>
+            <h3>Large Choix</h3>
+            <p>Citadines, berlines, SUV... trouvez la voiture parfaite.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <path d="M3 8h18" />
+                    <path d="M12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                </svg>
+            </div>
+            <h3>Tarifs Clairs</h3>
+            <p>Prix affichés par jour, sans frais cachés.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                    <rect x="9" y="3" width="6" height="4" rx="2" />
+                    <path d="M9 14l2 2 4-4" />
+                </svg>
+            </div>
+            <h3>Réservation Simple</h3>
+            <p>Réservez en ligne, validation rapide par notre équipe.</p>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <h2>Comment ça marche ?</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Créez votre compte</h4>
+                <p>Inscription gratuite en 2 minutes</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Choisissez une voiture</h4>
+                <p>Parcourez notre catalogue</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Réservez</h4>
+                <p>Sélectionnez vos dates</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h4>Confirmation</h4>
+                <p>Recevez votre facture</p>
+            </div>
+        </div>
+    </section>
+</div>

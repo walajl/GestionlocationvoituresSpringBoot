@@ -1,0 +1,65 @@
+<div class="container">
+    <div class="page-header">
+        <h1>Gestion des Marques</h1>
+        <p>Ajoutez et gérez les marques de véhicules</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 style="font-size: 16px; margin: 0;">{{ isEditing ? 'Modifier' : 'Ajouter' }} une marque</h2>
+        </div>
+        <form (ngSubmit)="onSubmit()" style="padding: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 15px; align-items: end;">
+                <div class="form-group" style="margin: 0;">
+                    <label>Nom de la Marque *</label>
+                    <input type="text" class="form-control" [(ngModel)]="currentBrand.nom" name="nom" required
+                        placeholder="Ex: Peugeot">
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label>Pays d'Origine</label>
+                    <input type="text" class="form-control" [(ngModel)]="currentBrand.pays" name="pays"
+                        placeholder="Ex: France">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    {{ isEditing ? 'Enregistrer' : 'Ajouter' }}
+                </button>
+                <button type="button" *ngIf="isEditing" (click)="resetForm()" class="btn btn-outline">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Pays</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let brand of brands">
+                        <td style="color: #64748b;">{{ brand.id }}</td>
+                        <td><strong>{{ brand.nom }}</strong></td>
+                        <td>{{ brand.pays || '-' }}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                <button (click)="editBrand(brand)" class="btn btn-outline"
+                                    style="padding: 6px 12px; font-size: 13px;">Modifier</button>
+                                <button (click)="deleteBrand(brand.id)" class="btn btn-danger"
+                                    style="padding: 6px 12px; font-size: 13px;">Supprimer</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!brands.length" style="text-align: center; padding: 40px; color: #64748b;">
+            Aucune marque. Ajoutez votre première marque ci-dessus.
+        </div>
+    </div>
+</div>

@@ -1,0 +1,185 @@
+<div class="container">
+  <!-- Page Header -->
+  <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>Flotte de Véhicules</h1>
+      <p>Gérez vos véhicules et leurs disponibilités</p>
+    </div>
+    <button *ngIf="authService.isAdmin()" class="btn btn-primary" (click)="openAddForm()">
+      + Ajouter un véhicule
+    </button>
+  </div>
+
+  <!-- Message -->
+  <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'"
+    [class.alert-danger]="messageType === 'error'">
+    {{ message }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading && !cars.length" class="card" style="text-align: center; padding: 60px; color: #64748b;">
+    Chargement...
+  </div>
+
+  <!-- Cars Table for Admin -->
+  <div class="card" *ngIf="cars.length && authService.isAdmin()">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Immatriculation</th>
+            <th>Modèle</th>
+            <th>Couleur</th>
+            <th>Prix/Jour</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let car of cars">
+            <td>
+              <div style="width: 60px; height: 45px; background: #f1f5f9; border-radius: 6px; overflow: hidden;">
+                <img *ngIf="car.imageUrl" [src]="getImageUrl(car)"
+                  style="width: 100%; height: 100%; object-fit: cover;">
+                <span *ngIf="!car.imageUrl"
+                  style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 11px; color: #94a3b8;">N/A</span>
+              </div>
+            </td>
+            <td><strong>{{ car.immatriculation }}</strong></td>
+            <td>{{ car.model?.brand?.nom || '' }} {{ car.model?.nom || '-' }}</td>
+            <td>{{ car.couleur || '-' }}</td>
+            <td><strong style="color: #2563eb;">{{ car.prixParJour }} DT</strong></td>
+            <td>
+              <span class="badge" [class.badge-success]="car.statut === 'DISPONIBLE'"
+                [class.badge-danger]="car.statut === 'LOUE'">
+                {{ car.statut }}
+              </span>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 13px;"
+                  (click)="editCar(car)">Modifier</button>
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;"
+                  (click)="deleteCar(car.id)">Suppr.</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cars Grid for Client -->
+  <div class="cars-grid" *ngIf="cars.length && !authService.isAdmin()">
+    <div *ngFor="let car of cars" class="car-card">
+      <div class="car-image" style="height: 180px; position: relative;">
+        <img *ngIf="car.imageUrl" [src]="getImageUrl(car)" [alt]="car.immatriculation"
+          style="width: 100%; height: 100%; object-fit: cover;">
+        <span *ngIf="!car.imageUrl" style="font-size: 32px; color: #94a3b8; font-weight: 700;">{{
+          car.model?.brand?.nom?.charAt(0) || 'A' }}</span>
+        <span class="badge" [class.badge-success]="car.statut === 'DISPONIBLE'"
+          [class.badge-danger]="car.statut === 'LOUE'" style="position: absolute; top: 15px; right: 15px;">
+          {{ car.statut }}
+        </span>
+      </div>
+      <div class="car-info">
+        <h3>{{ car.immatriculation }}</h3>
+        <div class="car-details">
+          <span>{{ car.model?.brand?.nom || '' }} {{ car.model?.nom || '' }}</span>
+          <span>{{ car.couleur }}</span>
+        </div>
+        <div class="car-footer">
+          <div class="price">{{ car.prixParJour }} DT <span>/ jour</span></div>
+          <button *ngIf="car.statut === 'DISPONIBLE'" class="btn btn-primary" style="padding: 8px 16px;"
+            (click)="reserveCar(car)">Réserver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !cars.length" class="card" style="text-align: center; padding: 60px;">
+    <h3 style="margin-bottom: 10px;">Aucune voiture</h3>
+    <p style="color: #64748b;">Cliquez sur "Ajouter un véhicule" pour commencer.</p>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" *ngIf="showForm && authService.isAdmin()" (click)="cancelForm()">
+  <div class="modal" (click)="$event.stopPropagation()" style="max-width: 550px;">
+    <div class="modal-header">
+      <h2>{{ isEditing ? 'Modifier' : 'Ajouter' }} un véhicule</h2>
+      <button class="close-btn" (click)="cancelForm()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Modal Alert -->
+      <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'"
+        [class.alert-danger]="messageType === 'error'" style="margin-bottom: 15px; padding: 10px; border-radius: 6px;">
+        {{ message }}
+      </div>
+      <form (ngSubmit)="submitCar()">
+        <!-- Row 1: Immatriculation + Modèle -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label>Immatriculation *</label>
+            <input type="text" class="form-control" [(ngModel)]="currentCar.immatriculation" name="immatriculation"
+              required placeholder="Ex: 200 TUN 1234">
+          </div>
+          <div class="form-group">
+            <label>Modèle *</label>
+            <select class="form-control" [(ngModel)]="currentCar.modelId" name="modelId" required>
+              <option [value]="null" disabled>Sélectionner un modèle</option>
+              <option *ngFor="let model of models" [value]="model.id">
+                {{ model.brand.nom }} {{ model.nom }} ({{ model.annee }})
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Couleur + Prix -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label>Couleur</label>
+            <input type="text" class="form-control" [(ngModel)]="currentCar.couleur" name="couleur"
+              placeholder="Ex: Noir">
+          </div>
+          <div class="form-group">
+            <label>Prix par jour (DT) *</label>
+            <input type="number" class="form-control" [(ngModel)]="currentCar.prixParJour" name="prixParJour" required
+              placeholder="Ex: 80">
+          </div>
+        </div>
+
+        <!-- Row 3: Statut -->
+        <div class="form-group">
+          <label>Statut</label>
+          <select class="form-control" [(ngModel)]="currentCar.statut" name="statut">
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="LOUE">Loué</option>
+            <option value="EN_MAINTENANCE">En maintenance</option>
+          </select>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label>Photo du véhicule</label>
+          <div style="display: flex; gap: 15px; align-items: center;">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" style="flex: 1;">
+            <div *ngIf="imagePreview"
+              style="width: 80px; height: 60px; border-radius: 4px; overflow: hidden; border: 1px solid #e2e8f0;">
+              <img [src]="imagePreview" alt="Aperçu" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            {{ loading ? 'Chargement...' : (isEditing ? 'Enregistrer' : 'Ajouter') }}
+          </button>
+          <button type="button" class="btn btn-outline" (click)="cancelForm()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

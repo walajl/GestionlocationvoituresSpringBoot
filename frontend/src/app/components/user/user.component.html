@@ -1,0 +1,171 @@
+<div class="container">
+    <div class="card"
+        style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; overflow: hidden;">
+        <div class="card-header"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+            <h2 style="margin: 0; font-size: 20px; font-weight: 600; color: #1e293b;">Gestion des Utilisateurs</h2>
+        </div>
+
+        <!-- Message -->
+        <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'"
+            [class.alert-danger]="messageType === 'error'"
+            style="margin: 20px 24px 0; padding: 14px 18px; border-radius: 8px;">
+            {{ message }}
+        </div>
+
+        <!-- Add Form Modal Button -->
+        <div style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0;">
+            <button class="btn btn-primary" (click)="isEditing = false; showForm = true"
+                style="padding: 10px 20px; font-weight: 500;">
+                + Ajouter un utilisateur
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="loading && !users.length" style="text-align: center; padding: 60px; color: #64748b;">
+            Chargement...
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive" *ngIf="users.length" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                        <th
+                            style="text-align: left; padding: 14px 24px; font-weight: 600; font-size: 13px; color: #64748b; text-transform: uppercase;">
+                            ID</th>
+                        <th
+                            style="text-align: left; padding: 14px 24px; font-weight: 600; font-size: 13px; color: #64748b; text-transform: uppercase;">
+                            Nom</th>
+                        <th
+                            style="text-align: left; padding: 14px 24px; font-weight: 600; font-size: 13px; color: #64748b; text-transform: uppercase;">
+                            Email</th>
+                        <th
+                            style="text-align: left; padding: 14px 24px; font-weight: 600; font-size: 13px; color: #64748b; text-transform: uppercase;">
+                            Rôle</th>
+                        <th
+                            style="text-align: left; padding: 14px 24px; font-weight: 600; font-size: 13px; color: #64748b; text-transform: uppercase;">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users" style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 16px 24px; color: #64748b; font-size: 14px;">{{ user.id }}</td>
+                        <td style="padding: 16px 24px; font-weight: 500; color: #1e293b;">{{ user.nom }}</td>
+                        <td style="padding: 16px 24px; color: #475569;">{{ user.email }}</td>
+                        <td style="padding: 16px 24px;">
+                            <span [style.background]="user.role === 'ADMIN' ? '#dbeafe' : '#f1f5f9'"
+                                [style.color]="user.role === 'ADMIN' ? '#1d4ed8' : '#475569'"
+                                style="padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td style="padding: 16px 24px;">
+                            <div style="display: flex; gap: 8px;">
+                                <button (click)="editUser(user); showForm = true" class="btn btn-secondary"
+                                    style="padding: 8px 14px; font-size: 13px;">
+                                    Modifier
+                                </button>
+                                <button (click)="deleteUser(user.id)" class="btn btn-danger"
+                                    style="padding: 8px 14px; font-size: 13px;">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && !users.length" style="text-align: center; padding: 60px 20px; color: #64748b;">
+            <div
+                style="width: 60px; height: 60px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path
+                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                </svg>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Aucun utilisateur</h3>
+            <p>Ajoutez votre premier utilisateur.</p>
+        </div>
+    </div>
+</div>
+
+<!-- FLOATING MODAL for Add/Edit User -->
+<div class="modal-overlay" *ngIf="showForm" (click)="showForm = false; resetForm()"
+    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+    <div class="modal" (click)="$event.stopPropagation()"
+        style="background: white; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+
+        <div class="modal-header"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 600; color: #1e293b;">{{ isEditing ? 'Modifier' :
+                'Ajouter' }} un utilisateur</h2>
+            <button (click)="showForm = false; resetForm()"
+                style="border: none; background: #e2e8f0; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 18px; color: #64748b;">&times;</button>
+        </div>
+
+        <!-- Modal Alert -->
+        <div *ngIf="message" class="alert" [class.alert-success]="messageType === 'success'"
+            [class.alert-danger]="messageType === 'error'"
+            style="margin: 20px 24px 0; padding: 10px; border-radius: 6px;">
+            {{ message }}
+        </div>
+
+        <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm" style="padding: 24px;">
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-weight: 500; margin-bottom: 6px; color: #374151; font-size: 14px;">Nom
+                    complet *</label>
+                <input type="text" [(ngModel)]="currentUser.nom" name="nom" required placeholder="Ex: Jean Dupont"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-weight: 500; margin-bottom: 6px; color: #374151; font-size: 14px;">Email
+                    *</label>
+                <input type="email" [(ngModel)]="currentUser.email" name="email" required #emailInput="ngModel"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder="jean@mail.com"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
+                    style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                    <span *ngIf="emailInput.errors?.['required']">L'email est requis.</span>
+                    <span *ngIf="emailInput.errors?.['pattern']">Format invalide.</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label
+                    style="display: block; font-weight: 500; margin-bottom: 6px; color: #374151; font-size: 14px;">Mot
+                    de passe
+                    <span *ngIf="!isEditing">*</span></label>
+                <input type="password" [(ngModel)]="currentUser.motDePasse" name="motDePasse" [required]="!isEditing"
+                    placeholder="••••••••"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;">
+                <p *ngIf="isEditing" style="font-size: 11px; color: #64748b; margin-top: 4px;">Laisser vide pour ne pas
+                    changer.</p>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label
+                    style="display: block; font-weight: 500; margin-bottom: 6px; color: #374151; font-size: 14px;">Rôle</label>
+                <select [(ngModel)]="currentUser.role" name="role"
+                    style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: white;">
+                    <option value="CLIENT">Client</option>
+                    <option value="ADMIN">Administrateur</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn btn-primary" [disabled]="loading"
+                    style="flex: 1; padding: 14px; font-size: 15px; font-weight: 600;">
+                    {{ loading ? 'Chargement...' : (isEditing ? 'Enregistrer' : 'Ajouter un utilisateur') }}
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="showForm = false; resetForm()"
+                    style="padding: 14px 20px; font-size: 15px;">
+                    Annuler
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

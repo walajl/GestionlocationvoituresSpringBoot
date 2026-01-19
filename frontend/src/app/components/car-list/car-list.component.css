@@ -1,0 +1,57 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.car-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.car-table th, .car-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.car-table th {
+  background-color: #34495e;
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.car-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.85em;
+  font-weight: bold;
+  color: white;
+}
+
+.badge.disponible {
+  background-color: #27ae60; /* Vert */
+}
+
+.badge.loue {
+  background-color: #e74c3c; /* Rouge */
+}
+
+.badge.en_maintenance {
+  background-color: #f39c12; /* Orange */
+}

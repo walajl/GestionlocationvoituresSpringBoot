@@ -1,0 +1,82 @@
+<div class="catalogue-page">
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Trouvez votre voiture idéale</h1>
+        <p>Explorez notre flotte et réservez en quelques clics</p>
+        <div class="badge badge-info" style="font-size: 16px; padding: 10px 20px;">{{ cars().length }} véhicules
+            disponibles</div>
+    </div>
+
+    <!-- Cars Grid -->
+    <div class="cars-grid">
+        <div *ngFor="let car of cars()" class="car-card">
+            <!-- Car Image -->
+            <div class="car-image" style="height: 180px; position: relative;">
+                <img *ngIf="car.imageUrl" [src]="'http://localhost:8081' + car.imageUrl" [alt]="car.immatriculation"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                <span *ngIf="!car.imageUrl" style="font-size: 32px; color: #94a3b8; font-weight: 700;">{{
+                    car.model?.brand?.nom?.charAt(0) || 'A' }}</span>
+                <span class="badge badge-success" style="position: absolute; top: 15px; left: 15px;">Disponible</span>
+            </div>
+
+            <!-- Car Info -->
+            <div class="car-info">
+                <h3>{{ car.model?.brand?.nom || 'Marque' }} {{ car.model?.nom || '' }}</h3>
+                <div class="car-details">
+                    <span>{{ car.immatriculation }}</span>
+                    <span>{{ car.couleur }}</span>
+                </div>
+                <div class="car-footer">
+                    <div class="price">{{ car.prixParJour }} DT <span>/ jour</span></div>
+                    <button class="btn btn-primary" (click)="openReservationModal(car)">Réserver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="cars().length === 0" class="card" style="text-align: center; padding: 80px; margin: 30px;">
+        <h3 style="margin-bottom: 10px;">Aucune voiture disponible</h3>
+        <p style="color: #64748b;">Revenez plus tard pour voir nos véhicules.</p>
+    </div>
+
+    <!-- Reservation Modal -->
+    <div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Réserver cette voiture</h2>
+                <button class="close-btn" (click)="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Car Summary -->
+                <div class="selected-car">
+                    <strong>{{ selectedCar()?.model?.brand?.nom }} {{ selectedCar()?.model?.nom }}</strong>
+                    <span>{{ selectedCar()?.immatriculation }}</span>
+                    <span class="price">{{ selectedCar()?.prixParJour }} DT/jour</span>
+                </div>
+
+                <!-- Date Inputs -->
+                <div class="form-group">
+                    <label>Date de début</label>
+                    <input type="date" class="form-control" [(ngModel)]="dateDebut">
+                </div>
+                <div class="form-group">
+                    <label>Date de fin</label>
+                    <input type="date" class="form-control" [(ngModel)]="dateFin">
+                </div>
+
+                <!-- Message -->
+                <div *ngIf="message()" class="alert" [class.alert-success]="message()?.includes('envoyée')"
+                    [class.alert-danger]="message()?.includes('Erreur')">
+                    {{ message() }}
+                </div>
+
+                <!-- Submit -->
+                <button class="btn btn-primary" style="width: 100%;" (click)="submitReservation()"
+                    [disabled]="!dateDebut || !dateFin || loading()">
+                    {{ loading() ? 'Traitement...' : 'Confirmer la réservation' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

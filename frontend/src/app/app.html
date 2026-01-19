@@ -1,0 +1,65 @@
+<div class="app-container">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo" (click)="navService.switchTab('home')" style="cursor: pointer;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"
+        style="vertical-align: middle; margin-right: 8px;">
+        <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+        <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+        <path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2" />
+        <path d="M9 17h6" />
+      </svg>
+      Location Voitures
+    </div>
+    <div class="nav-links">
+      <!-- Public Links -->
+      <ng-container *ngIf="!authService.isAuthenticated()">
+        <button (click)="navService.switchTab('home')">Accueil</button>
+        <button (click)="navService.switchTab('login')">Connexion</button>
+        <button class="btn-primary" (click)="navService.switchTab('register')">S'inscrire</button>
+      </ng-container>
+
+      <!-- Client Links -->
+      <ng-container *ngIf="authService.isAuthenticated() && !authService.isAdmin()">
+        <button (click)="navService.switchTab('catalogue')">Voitures</button>
+        <button (click)="navService.switchTab('my-reservations')">Mes Réservations</button>
+        <button (click)="logout()">Déconnexion</button>
+      </ng-container>
+
+      <!-- Admin Links -->
+      <ng-container *ngIf="authService.isAuthenticated() && authService.isAdmin()">
+        <button (click)="navService.switchTab('admin-reservations')">Réservations</button>
+        <button (click)="navService.switchTab('admin-cars')">Voitures</button>
+        <button (click)="navService.switchTab('admin-brands')">Marques</button>
+        <button (click)="navService.switchTab('admin-models')">Modèles</button>
+        <button (click)="navService.switchTab('admin-users')">Utilisateurs</button>
+        <button (click)="logout()">Déconnexion</button>
+      </ng-container>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Public Pages -->
+    <app-home *ngIf="(navService.currentTab$ | async) === 'home'"></app-home>
+    <app-login *ngIf="(navService.currentTab$ | async) === 'login'"></app-login>
+    <app-register *ngIf="(navService.currentTab$ | async) === 'register'"></app-register>
+    <app-forgot-password *ngIf="(navService.currentTab$ | async) === 'forgot-password'"></app-forgot-password>
+
+    <!-- Client Pages -->
+    <app-catalogue *ngIf="(navService.currentTab$ | async) === 'catalogue'"></app-catalogue>
+    <app-my-reservations *ngIf="(navService.currentTab$ | async) === 'my-reservations'"></app-my-reservations>
+
+    <!-- Admin Pages -->
+    <app-admin *ngIf="(navService.currentTab$ | async) === 'admin-reservations'"></app-admin>
+    <app-car-list *ngIf="(navService.currentTab$ | async) === 'admin-cars'"></app-car-list>
+    <app-brand *ngIf="(navService.currentTab$ | async) === 'admin-brands'"></app-brand>
+    <app-model *ngIf="(navService.currentTab$ | async) === 'admin-models'"></app-model>
+    <app-user *ngIf="(navService.currentTab$ | async) === 'admin-users'"></app-user>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 Location Voitures - Tous droits réservés</p>
+  </footer>
+</div>

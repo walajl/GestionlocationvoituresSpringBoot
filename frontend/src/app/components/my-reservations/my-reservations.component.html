@@ -1,0 +1,90 @@
+<div class="reservations-page">
+    <!-- Welcome Header -->
+    <div class="page-header">
+        <h1>Bonjour, {{ authService.currentUser()?.prenom || authService.currentUser()?.nom }}</h1>
+        <p>Voici un aperçu de vos réservations</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+        <div class="card"
+            style="text-align: center; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; border: none;">
+            <div
+                style="font-size: 13px; opacity: 0.9; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                Total Dépensé</div>
+            <div style="font-size: 36px; font-weight: 700;">{{ getTotalSpent() }} DT</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Sur vos locations confirmées</div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div
+                style="font-size: 13px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                En Attente</div>
+            <div style="font-size: 36px; font-weight: 700; color: #f59e0b;">{{ getPendingCount() }}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">En cours de validation</div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div
+                style="font-size: 13px; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                Confirmées</div>
+            <div style="font-size: 36px; font-weight: 700; color: #22c55e;">{{ getAcceptedCount() }}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Réservations validées</div>
+        </div>
+    </div>
+
+    <!-- Section Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-size: 20px; font-weight: 600; margin: 0;">Mes Réservations</h2>
+        <span class="badge badge-info">{{ reservations().length }} réservation(s)</span>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="card" style="text-align: center; padding: 60px; color: #64748b;">
+        Chargement de vos réservations...
+    </div>
+
+    <!-- Reservations List -->
+    <div *ngIf="!loading() && reservations().length" style="display: flex; flex-direction: column; gap: 15px;">
+        <div *ngFor="let res of reservations()" class="card"
+            style="display: flex; align-items: center; gap: 24px; padding: 20px;">
+            <!-- Car Image -->
+            <div
+                style="width: 100px; height: 70px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                <img *ngIf="res.car?.imageUrl" [src]="'http://localhost:8081' + res.car.imageUrl"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                <span *ngIf="!res.car?.imageUrl" style="font-size: 12px; color: #94a3b8; font-weight: 600;">AUTO</span>
+            </div>
+
+            <!-- Car Info -->
+            <div style="flex: 1;">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">{{ res.car?.immatriculation ||
+                    'Véhicule' }}</div>
+                <div style="font-size: 14px; color: #64748b;">{{ res.dateDebut }} → {{ res.dateFin }}</div>
+            </div>
+
+            <!-- Amount -->
+            <div style="text-align: right; margin-right: 20px;">
+                <div style="font-size: 22px; font-weight: 700; color: #2563eb;">{{ res.montantTotal }} DT</div>
+            </div>
+
+            <!-- Status Badge & Actions -->
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                <span class="badge" [class.badge-warning]="res.statut === 'EN_ATTENTE'"
+                    [class.badge-success]="res.statut === 'ACCEPTEE'" [class.badge-danger]="res.statut === 'ANNULEE'"
+                    style="padding: 10px 20px;">
+                    {{ getStatusLabel(res.statut) }}
+                </span>
+                <button *ngIf="res.statut === 'EN_ATTENTE'" class="btn btn-outline"
+                    style="padding: 4px 12px; font-size: 12px; border-color: #ef4444; color: #ef4444;"
+                    (click)="cancelReservation(res.id)">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading() && !reservations().length" class="card" style="text-align: center; padding: 60px;">
+        <h3 style="margin-bottom: 10px;">Aucune réservation</h3>
+        <p style="color: #64748b;">Explorez notre catalogue et réservez votre première voiture.</p>
+    </div>
+</div>

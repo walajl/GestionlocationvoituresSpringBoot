@@ -1,0 +1,24 @@
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [4.683 seconds] - 2026-01-17T05:06:15.718Z
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Unexpected closing tag "div". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/components/reservation/reservation.component.html:10:4:
+[37m      10 │     [32m</div>[37m
+         ╵     [32m~~~~~~[0m
+
+  Error occurs in the template of component ReservationComponent.
+
+    src/app/components/reservation/reservation.component.ts:11:17:
+[37m      11 │     templateUrl: [32m'./reservation.component.html'[37m,
+         ╵                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG2008: Could not find stylesheet file './reservation.component.css'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/components/reservation/reservation.component.ts:12:16:
+[37m      12 │     styleUrls: [[32m'./reservation.component.css'[37m]
+         ╵                 [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

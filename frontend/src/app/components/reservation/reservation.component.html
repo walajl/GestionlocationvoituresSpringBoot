@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="card reservation-card">
+        <h2>Nouvelle Réservation</h2>
+        <p class="user-info">Client : <strong>{{ authService.currentUser()?.nom }} {{ authService.currentUser()?.prenom
+                }}</strong></p>
+
+        <form (ngSubmit)="onSubmit()" #resForm="ngForm" class="res-form">
+            <div class="form-group">
+                <label>Choisir un véhicule</label>
+                <select [(ngModel)]="reservation.carId" name="carId" required class="form-control">
+                    <option [value]="0" disabled>Sélectionnez une voiture disponible</option>
+                    <option *ngFor="let car of cars" [value]="car.id">
+                        {{ car.immatriculation }} - {{ car.model?.nom }} ({{ car.prixParJour }} DT/jour)
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date de Début</label>
+                    <input type="date" [(ngModel)]="reservation.dateDebut" name="dateDebut" required
+                        class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Date de Fin</label>
+                    <input type="date" [(ngModel)]="reservation.dateFin" name="dateFin" required class="form-control">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;"
+                [disabled]="!resForm.valid || reservation.carId === 0">
+                Confirmer la Réservation
+            </button>
+        </form>
+
+        <div *ngIf="message" class="alert" style="margin-top: 15px;"
+            [ngClass]="{'alert-success': message.includes('succès'), 'alert-danger': message.includes('Erreur')}">
+            {{ message }}
+        </div>
+    </div>
+</div>

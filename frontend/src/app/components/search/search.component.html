@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="card">
+        <h2>Recherche Avancée</h2>
+
+        <!-- Formulaire de Recherche -->
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+            <input type="text" [(ngModel)]="brand" placeholder="Marque (ex: Renault)" style="max-width: 200px;">
+            <input type="text" [(ngModel)]="model" placeholder="Modèle (ex: Clio)" style="max-width: 200px;">
+            <button (click)="onSearch()" class="btn btn-primary">Rechercher</button>
+        </div>
+
+        <!-- Résultats -->
+        <div *ngIf="hasSearched">
+            <h3 *ngIf="results.length > 0" style="font-size: 1.2rem; color: var(--success-color);">
+                {{ results.length }} véhicule(s) trouvé(s)
+            </h3>
+            <h3 *ngIf="results.length === 0" style="font-size: 1.2rem; color: var(--danger-color);">
+                Aucun résultat trouvé.
+            </h3>
+
+            <table *ngIf="results.length > 0">
+                <thead>
+                    <tr>
+                        <th>Immatriculation</th>
+                        <th>Marque / Modèle</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let car of results">
+                        <td>{{ car.immatriculation }}</td>
+                        <td>{{ car.model?.brand?.nom }} {{ car.model?.nom }}</td>
+                        <td>{{ car.prixParJour }} DT</td>
+                        <td>
+                            <span [class]="'badge ' + car.statut.toLowerCase()">{{ car.statut }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

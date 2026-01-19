@@ -1,0 +1,93 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>Créer un Compte</h1>
+        <p>Inscrivez-vous pour réserver une voiture</p>
+
+        <div *ngIf="success()" class="alert alert-success">
+            Compte créé avec succès !
+            <a href="#" (click)="navService.switchTab('login'); $event.preventDefault()">Connectez-vous</a>
+        </div>
+
+        <form (ngSubmit)="onSubmit(registerForm)" #registerForm="ngForm" *ngIf="!success()">
+            <div *ngIf="error()" class="alert alert-danger" style="margin-bottom: 20px;">
+                {{ error() }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" class="form-control" [(ngModel)]="user.nom" name="nom" required
+                        #nomInput="ngModel" placeholder="Ben Salah">
+                    <div *ngIf="nomInput.invalid && (nomInput.dirty || nomInput.touched)"
+                        style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                        Le nom est requis.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-control" [(ngModel)]="user.email" name="email" required
+                        #emailInput="ngModel" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                        placeholder="ahmed@email.com">
+                    <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
+                        style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                        <span *ngIf="emailInput.errors?.['required']">L'email est requis.</span>
+                        <span *ngIf="emailInput.errors?.['pattern']">Format d'email invalide (ex:
+                            nom@domaine.com).</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone *</label>
+                <input type="tel" class="form-control" [(ngModel)]="user.telephone" name="telephone" required
+                    #phoneInput="ngModel" pattern="^[0-9]+$" inputmode="numeric" (input)="onPhoneInput($event)"
+                    placeholder="98 765 432">
+                <div *ngIf="phoneInput.invalid && (phoneInput.dirty || phoneInput.touched)"
+                    style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                    <span *ngIf="phoneInput.errors?.['required']">Le téléphone est requis.</span>
+                    <span *ngIf="phoneInput.errors?.['pattern']">Le téléphone ne doit contenir que des chiffres.</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Adresse</label>
+                <input type="text" class="form-control" [(ngModel)]="user.adresse" name="adresse"
+                    placeholder="Rue de la Liberté, Tunis">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Mot de passe *</label>
+                    <input type="password" class="form-control" [(ngModel)]="user.password" name="password" required
+                        placeholder="••••••••" #passwordInput="ngModel">
+                    <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+                        style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                        Le mot de passe est requis.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirmer *</label>
+                    <input type="password" class="form-control" [(ngModel)]="confirmPassword" name="confirmPassword"
+                        required placeholder="••••••••" #confirmPassInput="ngModel">
+                    <div *ngIf="confirmPassInput.invalid && (confirmPassInput.dirty || confirmPassInput.touched)"
+                        style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                        La confirmation est requise.
+                    </div>
+                    <div *ngIf="confirmPassword && user.password !== confirmPassword && confirmPassInput.touched"
+                        style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                        Les mots de passe ne correspondent pas.
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="loading()">
+                <span *ngIf="!loading()">S'inscrire</span>
+                <span *ngIf="loading()">Chargement...</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Déjà inscrit ? <a href="#" (click)="navService.switchTab('login'); $event.preventDefault()">Se Connecter</a>
+        </div>
+    </div>
+</div>

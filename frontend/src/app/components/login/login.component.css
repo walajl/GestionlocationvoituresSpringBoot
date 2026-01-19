@@ -1,0 +1,14 @@
+.forgot-link {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.forgot-link a:hover {
+  text-decoration: underline;
+}
