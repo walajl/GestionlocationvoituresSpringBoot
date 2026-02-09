@@ -54,6 +54,15 @@ public class UserDTO {
         this.password = password;
     }
     
+    // Alias methods for French naming (motDePasse = password)
+    public String getMotDePasse() {
+        return password;
+    }
+    
+    public void setMotDePasse(String motDePasse) {
+        this.password = motDePasse;
+    }
+    
     public String getTelephone() {
         return telephone;
     }
